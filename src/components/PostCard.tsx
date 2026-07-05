@@ -56,6 +56,25 @@ export default function PostCard({
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  const handleNativeShare = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: `Kiringo - ${post.authorName}`,
+          text: postText,
+          url: postUrl
+        });
+        setShowShareMenu(false);
+      } catch (err) {
+        console.log("Native share failed or dismissed", err);
+      }
+    } else {
+      // Fallback
+      handleCopyLink(e);
+    }
+  };
+
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCommentText.trim()) return;
@@ -258,6 +277,16 @@ export default function PostCard({
                 </div>
                 
                 <div className="flex flex-col gap-1">
+                  {/* Partage Natif (Web Share API) */}
+                  <button
+                    onClick={handleNativeShare}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-black text-white bg-[#BC6C25] hover:bg-[#606C38] transition cursor-pointer text-left shadow-sm mb-1.5"
+                    title="Partager directement via les applications de votre téléphone ou ordinateur"
+                  >
+                    <Share2 className="w-4 h-4 text-white shrink-0" />
+                    <span>Partage direct 📱</span>
+                  </button>
+
                   {/* Copier le lien */}
                   <button
                     onClick={handleCopyLink}

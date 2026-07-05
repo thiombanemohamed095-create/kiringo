@@ -15,6 +15,7 @@ import {
   Briefcase, 
   GraduationCap, 
   Heart, 
+  Star,
   MessageCircle, 
   Globe, 
   Smile, 
@@ -40,7 +41,9 @@ import {
   Image,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  Sun,
+  Moon
 } from "lucide-react";
 
 import { Post, Group, MarketplaceItem, UserProfile, Comment, CommunityEvent, Photo, PhotoAlbum } from "./types";
@@ -193,6 +196,23 @@ export default function App() {
   const [showPhotoAdder, setShowPhotoAdder] = useState(false);
   const [newPhotoUrl, setNewPhotoUrl] = useState("");
   const [newPhotoCaption, setNewPhotoCaption] = useState("");
+
+  // Dark Mode state
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem("kiringo_dark_mode");
+    return saved === "true";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("kiringo_dark_mode", String(darkMode));
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  const [savedCategory, setSavedCategory] = useState<'posts' | 'groups' | 'events' | 'market'>('posts');
 
   // Synchronize states to localStorage
   useEffect(() => {
@@ -576,6 +596,33 @@ export default function App() {
     setNotifications([newNotif, ...notifications]);
   };
 
+  const handleToggleGroupFavorite = (groupId: string) => {
+    setGroups(groups.map(g => {
+      if (g.id === groupId) {
+        return { ...g, isFavorite: !g.isFavorite };
+      }
+      return g;
+    }));
+  };
+
+  const handleToggleEventFavorite = (eventId: string) => {
+    setEvents(events.map(ev => {
+      if (ev.id === eventId) {
+        return { ...ev, isFavorite: !ev.isFavorite };
+      }
+      return ev;
+    }));
+  };
+
+  const handleToggleMarketItemFavorite = (itemId: string) => {
+    setMarketItems(marketItems.map(item => {
+      if (item.id === itemId) {
+        return { ...item, isFavorite: !item.isFavorite };
+      }
+      return item;
+    }));
+  };
+
   // Confirm friend invitation
   const handleAcceptFriend = (reqId: string, name: string) => {
     setFriendRequests(friendRequests.filter(r => r.id !== reqId));
@@ -849,6 +896,15 @@ export default function App() {
   if (!isLoggedIn) {
     return (
       <div id="auth-container" className="min-h-screen bg-[#FDFBF7] text-[#283618] flex items-center justify-center p-4 md:p-8 font-sans selection:bg-[#E9EDC9] selection:text-[#283618] relative overflow-hidden">
+        {/* Theme Toggle on Auth Screen */}
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="absolute top-4 right-4 p-2.5 rounded-full bg-[#FEFAE0] border border-[#E9EDC9] hover:bg-[#E9EDC9]/50 text-[#606C38] hover:text-[#283618] transition cursor-pointer z-50 shadow-sm flex items-center justify-center"
+          title={darkMode ? "Leral (Mode clair)" : "Mbindum mbeur (Mode sombre)"}
+        >
+          {darkMode ? <Sun className="w-4 h-4 md:w-5 md:h-5" /> : <Moon className="w-4 h-4 md:w-5 md:h-5" />}
+        </button>
+
         {/* Decorative background blobs */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#E9EDC9] rounded-full filter blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2 animate-pulse animate-duration-[10s]"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#FEFAE0] rounded-full filter blur-3xl opacity-50 translate-x-1/2 translate-y-1/2 animate-pulse animate-duration-[8s]"></div>
@@ -1205,6 +1261,15 @@ export default function App() {
 
         {/* Right Nav Utilities */}
         <div className="flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#E9EDC9] hover:bg-[#606C38]/20 flex items-center justify-center text-[#283618] transition cursor-pointer"
+            title={darkMode ? "Leral (Mode clair)" : "Mbindum mbeur (Mode sombre)"}
+          >
+            {darkMode ? <Sun className="w-4 h-4 md:w-5 md:h-5" /> : <Moon className="w-4 h-4 md:w-5 md:h-5" />}
+          </button>
+
           {/* Notifications Button */}
           <div className="relative">
             <button 
@@ -1466,13 +1531,37 @@ export default function App() {
                     referrerPolicy="no-referrer"
                   />
                   <div className="flex-1">
-                    <textarea
-                      placeholder={`Lu bees tey, ${userProfile.name.split(" ")[0]} ? Waxal li nekk ci sa xol...`}
-                      value={newPostText}
-                      onChange={(e) => setNewPostText(e.target.value)}
-                      rows={2}
-                      className="w-full bg-[#FDFBF7] text-xs py-2.5 px-4 rounded-2xl border border-[#E9EDC9] text-[#283618] placeholder-[#A3B18A] focus:outline-none focus:ring-1 focus:ring-[#BC6C25] resize-none"
-                    />
+                    <div className="relative">
+                      <textarea
+                        placeholder={`Lu bees tey, ${userProfile.name.split(" ")[0]} ? Waxal li nekk ci sa xol...`}
+                        value={newPostText}
+                        onChange={(e) => setNewPostText(e.target.value)}
+                        maxLength={500}
+                        rows={2}
+                        className="w-full bg-[#FDFBF7] text-xs py-2.5 pl-4 pr-10 rounded-2xl border border-[#E9EDC9] text-[#283618] placeholder-[#A3B18A] focus:outline-none focus:ring-1 focus:ring-[#BC6C25] resize-none"
+                      />
+                      {newPostText && (
+                        <button
+                          type="button"
+                          onClick={() => setNewPostText("")}
+                          className="absolute top-2 right-2.5 p-1 text-[#A3B18A] hover:text-[#BC6C25] hover:bg-[#FEFAE0] rounded-full transition cursor-pointer"
+                          title="Fattali mbind mi"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex justify-end mt-1 px-1">
+                      <span className={`text-[10px] font-mono transition-colors duration-200 ${
+                        newPostText.length > 475 
+                          ? "text-red-500 font-bold animate-pulse" 
+                          : newPostText.length > 400 
+                          ? "text-[#BC6C25] font-bold" 
+                          : "text-[#A3B18A]"
+                      }`}>
+                        {newPostText.length} / 500
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -1846,6 +1935,14 @@ export default function App() {
                         <span className="absolute bottom-2 right-2 bg-[#BC6C25] text-white text-xs font-bold py-1 px-3 rounded-full shadow">
                           {item.price.toLocaleString()} FCFA
                         </span>
+                        {/* Favorite Button */}
+                        <button
+                          onClick={() => handleToggleMarketItemFavorite(item.id)}
+                          className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-[#151c10]/90 backdrop-blur-xs rounded-full shadow-sm text-[#BC6C25] hover:scale-105 transition cursor-pointer flex items-center justify-center border border-[#E9EDC9]"
+                          title={item.isFavorite ? "Sottil ci favori" : "Doleel ci favori"}
+                        >
+                          <Star className={`w-3.5 h-3.5 ${item.isFavorite ? "fill-[#BC6C25] text-[#BC6C25]" : "text-[#A3B18A]"}`} />
+                        </button>
                       </div>
                       
                       <div className="p-4 flex-1 flex flex-col justify-between">
@@ -1923,6 +2020,14 @@ export default function App() {
                           className="w-full h-full object-cover"
                           referrerPolicy="no-referrer"
                         />
+                        {/* Favorite Button */}
+                        <button
+                          onClick={() => handleToggleGroupFavorite(group.id)}
+                          className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-[#151c10]/90 backdrop-blur-xs rounded-full shadow-sm text-[#BC6C25] hover:scale-105 transition cursor-pointer flex items-center justify-center border border-[#E9EDC9]"
+                          title={group.isFavorite ? "Sottil ci favori" : "Doleel ci favori"}
+                        >
+                          <Star className={`w-3.5 h-3.5 ${group.isFavorite ? "fill-[#BC6C25] text-[#BC6C25]" : "text-[#A3B18A]"}`} />
+                        </button>
                       </div>
                       <div className="p-4">
                         <h4 className="font-bold text-sm text-[#283618]">{group.name}</h4>
@@ -2316,43 +2421,309 @@ export default function App() {
             </div>
           )}
 
-          {/* TAB 6: SAVED POSTS / ENREGISTRÉS */}
+          {/* TAB 6: SAVED POSTS & FAVORITES / ENREGISTRÉS AK FAVORIS */}
           {currentTab === 'saved' && (
-            <div id="saved-tab-content" className="max-w-3xl mx-auto flex flex-col gap-6">
+            <div id="saved-tab-content" className="max-w-4xl mx-auto flex flex-col gap-6 animate-fade-in">
               <div className="bg-white p-6 rounded-[32px] border border-[#E9EDC9] shadow-sm animate-fade-in">
-                <div className="flex items-center gap-2 mb-2">
-                  <Bookmark className="w-5 h-5 text-[#BC6C25]" />
-                  <h2 className="font-extrabold text-lg text-[#283618]">Mbir yi ma denc</h2>
-                </div>
-                <p className="text-xs text-[#606C38]">
-                  Fii ngay guiss say mbind ak say sibeef yu nga denc ngir gannaaw.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                {posts.filter(p => p.isSaved).length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-[32px] border border-[#E9EDC9] p-8">
-                    <Bookmark className="w-12 h-12 text-[#A3B18A] mx-auto mb-3 opacity-60 animate-bounce" />
-                    <p className="text-sm font-bold text-[#283618]">Amul mbir mu dencagñ</p>
-                    <p className="text-xs text-[#606C38] mt-1">
-                      Bësal ci signet bi nekk ci ndijooru mbind yi ngir denc ko fii.
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Bookmark className="w-5 h-5 text-[#BC6C25]" />
+                      <h2 className="font-extrabold text-lg text-[#283618]">Sama Mbir yi ma Denc ak Sama Favori</h2>
+                    </div>
+                    <p className="text-xs text-[#606C38]">
+                      Fii ngay guiss say mbind, say mbooloo, say xew-xew ak say mbir luuma yu nga denc walla yu nga bëgg ngir andal ko ci jamm.
                     </p>
                   </div>
-                ) : (
-                  posts.filter(p => p.isSaved).map(post => (
-                    <PostCard
-                      key={`saved-${post.id}`}
-                      post={post}
-                      userAvatar={userProfile.avatar}
-                      userName={userProfile.name}
-                      onLike={handleLikePost}
-                      onAddComment={handleAddComment}
-                      onOpenChatWithPersona={handleOpenChatWithPersona}
-                      onSave={handleToggleSavePost}
-                    />
-                  ))
-                )}
+                </div>
+
+                {/* Sub-categories Selector */}
+                <div className="flex flex-wrap gap-2 p-1.5 bg-[#FEFAE0]/40 rounded-2xl border border-[#E9EDC9]">
+                  <button
+                    onClick={() => setSavedCategory('posts')}
+                    className={`flex-1 min-w-[120px] text-center py-2 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
+                      savedCategory === 'posts'
+                        ? "bg-[#606C38] text-white shadow-sm"
+                        : "text-[#283618] hover:bg-[#FEFAE0]"
+                    }`}
+                  >
+                    📝 Mbind yi ({posts.filter(p => p.isSaved).length})
+                  </button>
+                  <button
+                    onClick={() => setSavedCategory('groups')}
+                    className={`flex-1 min-w-[120px] text-center py-2 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
+                      savedCategory === 'groups'
+                        ? "bg-[#606C38] text-white shadow-sm"
+                        : "text-[#283618] hover:bg-[#FEFAE0]"
+                    }`}
+                  >
+                    👥 Mbooloo yi ({groups.filter(g => g.isFavorite).length})
+                  </button>
+                  <button
+                    onClick={() => setSavedCategory('events')}
+                    className={`flex-1 min-w-[120px] text-center py-2 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
+                      savedCategory === 'events'
+                        ? "bg-[#606C38] text-white shadow-sm"
+                        : "text-[#283618] hover:bg-[#FEFAE0]"
+                    }`}
+                  >
+                    📅 Xew-xew yi ({events.filter(ev => ev.isFavorite).length})
+                  </button>
+                  <button
+                    onClick={() => setSavedCategory('market')}
+                    className={`flex-1 min-w-[120px] text-center py-2 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
+                      savedCategory === 'market'
+                        ? "bg-[#606C38] text-white shadow-sm"
+                        : "text-[#283618] hover:bg-[#FEFAE0]"
+                    }`}
+                  >
+                    🛒 Luuma bi ({marketItems.filter(item => item.isFavorite).length})
+                  </button>
+                </div>
               </div>
+
+              {/* Render Saved Category Content */}
+              {savedCategory === 'posts' && (
+                <div className="flex flex-col gap-4 animate-fade-in">
+                  {posts.filter(p => p.isSaved).length === 0 ? (
+                    <div className="text-center py-12 bg-white rounded-[32px] border border-[#E9EDC9] p-8">
+                      <Bookmark className="w-12 h-12 text-[#A3B18A] mx-auto mb-3 opacity-60 animate-bounce" />
+                      <p className="text-sm font-bold text-[#283618]">Amul mbind mu dencagñ</p>
+                      <p className="text-xs text-[#606C38] mt-1">
+                        Bësal ci signet bi nekk ci ndijooru mbind yi ngir denc ko fii.
+                      </p>
+                    </div>
+                  ) : (
+                    posts.filter(p => p.isSaved).map(post => (
+                      <PostCard
+                        key={`saved-post-${post.id}`}
+                        post={post}
+                        userAvatar={userProfile.avatar}
+                        userName={userProfile.name}
+                        onLike={handleLikePost}
+                        onAddComment={handleAddComment}
+                        onOpenChatWithPersona={handleOpenChatWithPersona}
+                        onSave={handleToggleSavePost}
+                      />
+                    ))
+                  )}
+                </div>
+              )}
+
+              {savedCategory === 'groups' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+                  {groups.filter(g => g.isFavorite).length === 0 ? (
+                    <div className="col-span-full text-center py-12 bg-white rounded-[32px] border border-[#E9EDC9] p-8">
+                      <Star className="w-12 h-12 text-[#A3B18A] mx-auto mb-3 opacity-60 animate-pulse" />
+                      <p className="text-sm font-bold text-[#283618]">Amul mbooloo mu nekk ci say favori</p>
+                      <p className="text-xs text-[#606C38] mt-1">
+                        Bësal ci bidoor (star) bi nekk ci nataalu mbooloo yi ngir andal ko fii.
+                      </p>
+                    </div>
+                  ) : (
+                    groups.filter(g => g.isFavorite).map(group => (
+                      <div 
+                        key={`saved-group-${group.id}`}
+                        className="bg-white rounded-[32px] border border-[#E9EDC9] overflow-hidden shadow-sm flex flex-col justify-between animate-fade-in"
+                      >
+                        <div>
+                          <div className="h-32 bg-[#FAEDCD] relative overflow-hidden">
+                            <img 
+                              src={group.cover} 
+                              alt={group.name} 
+                              className="w-full h-full object-cover"
+                              referrerPolicy="no-referrer"
+                            />
+                            <button
+                              onClick={() => handleToggleGroupFavorite(group.id)}
+                              className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-[#151c10]/90 backdrop-blur-xs rounded-full shadow-sm text-[#BC6C25] hover:scale-105 transition cursor-pointer flex items-center justify-center border border-[#E9EDC9]"
+                              title="Sottil ci favori"
+                            >
+                              <Star className="w-3.5 h-3.5 fill-[#BC6C25] text-[#BC6C25]" />
+                            </button>
+                          </div>
+                          <div className="p-4">
+                            <h4 className="font-bold text-sm text-[#283618]">{group.name}</h4>
+                            <span className="text-[10px] text-[#A3B18A] block mt-1">{group.membersCount.toLocaleString()} dëkkandoo • {group.postsCount} mbind</span>
+                            <p className="text-xs text-[#606C38] mt-2 leading-relaxed">{group.description}</p>
+                          </div>
+                        </div>
+
+                        <div className="p-4 pt-0">
+                          <button
+                            onClick={() => handleToggleGroupJoin(group)}
+                            className={`w-full py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                              group.isJoined 
+                                ? "bg-[#E9EDC9] text-[#606C38] hover:bg-red-50 hover:text-red-700" 
+                                : "bg-[#606C38] text-white hover:bg-[#283618]"
+                            }`}
+                          >
+                            {group.isJoined ? "✓ Andal na" : "And ak mbooloo bi"}
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {savedCategory === 'events' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+                  {events.filter(ev => ev.isFavorite).length === 0 ? (
+                    <div className="col-span-full text-center py-12 bg-white rounded-[32px] border border-[#E9EDC9] p-8">
+                      <Star className="w-12 h-12 text-[#A3B18A] mx-auto mb-3 opacity-60 animate-pulse" />
+                      <p className="text-sm font-bold text-[#283618]">Amul xew-xew mu nekk ci say favori</p>
+                      <p className="text-xs text-[#606C38] mt-1">
+                        Bësal ci bidoor (star) bi nekk ci nataalu xew-xew yi ngir denc ko fii.
+                      </p>
+                    </div>
+                  ) : (
+                    events.filter(ev => ev.isFavorite).map(ev => (
+                      <div key={`saved-event-${ev.id}`} className="bg-white rounded-[32px] border border-[#E9EDC9] overflow-hidden shadow-sm hover:shadow-md transition flex flex-col animate-fade-in">
+                        <div className="h-40 relative">
+                          <img src={ev.image} alt={ev.title} className="w-full h-full object-cover" />
+                          <div className="absolute top-3 left-3 bg-[#606C38] text-white text-[9px] font-black uppercase tracking-wider py-1 px-2.5 rounded-full">
+                            {ev.date}
+                          </div>
+                          <button
+                            onClick={() => handleToggleEventFavorite(ev.id)}
+                            className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-[#151c10]/90 backdrop-blur-xs rounded-full shadow-sm text-[#BC6C25] hover:scale-105 transition cursor-pointer flex items-center justify-center border border-[#E9EDC9]"
+                            title="Sottil ci favori"
+                          >
+                            <Star className="w-3.5 h-3.5 fill-[#BC6C25] text-[#BC6C25]" />
+                          </button>
+                        </div>
+                        
+                        <div className="p-5 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h3 className="font-extrabold text-sm text-[#283618] mb-1.5 leading-snug">{ev.title}</h3>
+                            <p className="text-xs text-[#606C38] line-clamp-3 mb-4">{ev.description}</p>
+                            
+                            <div className="flex flex-col gap-1.5 text-[11px] text-[#A3B18A] mb-4">
+                              <div className="flex items-center gap-2">
+                                <MapPin className="w-3.5 h-3.5 text-[#BC6C25] shrink-0" />
+                                <span className="text-[#283618]/80 font-medium truncate">{ev.location}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Users className="w-3.5 h-3.5 text-[#BC6C25] shrink-0" />
+                                <span className="text-[#283618]/80 font-medium">{ev.participantsCount} andaandoo</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-[#FDFBF7] flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                              <img src={ev.organizerAvatar} alt={ev.organizerName} className="w-6 h-6 rounded-full object-cover border" referrerPolicy="no-referrer" />
+                              <div className="text-left">
+                                <p className="text-[9px] text-[#A3B18A] leading-none">Ki ko soss :</p>
+                                <p className="text-[10px] font-bold text-[#283618]">{ev.organizerName}</p>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => handleToggleJoinEvent(ev.id)}
+                              className={`text-[10px] font-black py-1.5 px-3 rounded-full transition cursor-pointer border ${
+                                ev.isJoined
+                                  ? "bg-[#606C38] border-[#606C38] text-white"
+                                  : "bg-[#FEFAE0] border-[#E9EDC9] text-[#BC6C25] hover:bg-[#E9EDC9]"
+                              }`}
+                            >
+                              {ev.isJoined ? "✓ Bokk na" : "Bokk na"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {savedCategory === 'market' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
+                  {marketItems.filter(item => item.isFavorite).length === 0 ? (
+                    <div className="col-span-full text-center py-12 bg-white rounded-[32px] border border-[#E9EDC9] p-8">
+                      <Star className="w-12 h-12 text-[#A3B18A] mx-auto mb-3 opacity-60 animate-pulse" />
+                      <p className="text-sm font-bold text-[#283618]">Amul mbir mu nekk ci say favori luuma</p>
+                      <p className="text-xs text-[#606C38] mt-1">
+                        Bësal ci bidoor (star) bi nekk ci nataalu mbir yi ngir denc ko fii.
+                      </p>
+                    </div>
+                  ) : (
+                    marketItems.filter(item => item.isFavorite).map(item => (
+                      <div 
+                        key={`saved-market-${item.id}`} 
+                        className="bg-white rounded-[32px] border border-[#E9EDC9] overflow-hidden shadow-sm hover:shadow-md transition duration-200 flex flex-col animate-fade-in"
+                      >
+                        <div className="h-44 overflow-hidden relative bg-slate-50">
+                          <img 
+                            src={item.image} 
+                            alt={item.title} 
+                            className="w-full h-full object-cover"
+                            referrerPolicy="no-referrer"
+                          />
+                          <span className="absolute bottom-2 right-2 bg-[#BC6C25] text-white text-xs font-bold py-1 px-3 rounded-full shadow">
+                            {item.price.toLocaleString()} FCFA
+                          </span>
+                          <button
+                            onClick={() => handleToggleMarketItemFavorite(item.id)}
+                            className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-[#151c10]/90 backdrop-blur-xs rounded-full shadow-sm text-[#BC6C25] hover:scale-105 transition cursor-pointer flex items-center justify-center border border-[#E9EDC9]"
+                            title="Sottil ci favori"
+                          >
+                            <Star className="w-3.5 h-3.5 fill-[#BC6C25] text-[#BC6C25]" />
+                          </button>
+                        </div>
+                        
+                        <div className="p-4 flex-1 flex flex-col justify-between">
+                          <div>
+                            <span className="text-[9px] bg-[#E9EDC9] text-[#606C38] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              {item.category}
+                            </span>
+                            <h4 className="font-bold text-sm text-[#283618] mt-2 line-clamp-1">{item.title}</h4>
+                            <p className="text-xs text-[#606C38] mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
+                          </div>
+
+                          <div className="pt-3 border-t border-[#FDFBF7] mt-3 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <img 
+                                src={item.sellerAvatar} 
+                                alt={item.sellerName} 
+                                className="w-6 h-6 rounded-full object-cover"
+                                referrerPolicy="no-referrer"
+                              />
+                              <span className="text-[10px] text-[#A3B18A] truncate max-w-[80px]">Par {item.sellerName.split(" ")[0]}</span>
+                            </div>
+                            
+                            {item.sellerName === userProfile.name ? (
+                              <button
+                                type="button"
+                                onClick={() => setItemToDelete(item)}
+                                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 text-[10px] font-bold py-1.5 px-3 rounded-full transition cursor-pointer flex items-center gap-1"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Far ko</span>
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  const foundPersona = PERSONAS.find(p => p.name.includes(item.sellerName.split(" ")[0]));
+                                  if (foundPersona) {
+                                    handleOpenChatWithPersona(foundPersona.id);
+                                  } else {
+                                    handleOpenChatWithPersona("bot");
+                                  }
+                                }}
+                                className="bg-[#606C38] hover:bg-[#283618] text-white text-[10px] font-bold py-1.5 px-3 rounded-full transition cursor-pointer"
+                              >
+                                Jookkoo
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -2468,6 +2839,14 @@ export default function App() {
                       <div className="absolute top-3 left-3 bg-[#606C38] text-white text-[9px] font-black uppercase tracking-wider py-1 px-2.5 rounded-full">
                         {ev.date}
                       </div>
+                      {/* Favorite Button */}
+                      <button
+                        onClick={() => handleToggleEventFavorite(ev.id)}
+                        className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-[#151c10]/90 backdrop-blur-xs rounded-full shadow-sm text-[#BC6C25] hover:scale-105 transition cursor-pointer flex items-center justify-center border border-[#E9EDC9]"
+                        title={ev.isFavorite ? "Sottil ci favori" : "Doleel ci favori"}
+                      >
+                        <Star className={`w-3.5 h-3.5 ${ev.isFavorite ? "fill-[#BC6C25] text-[#BC6C25]" : "text-[#A3B18A]"}`} />
+                      </button>
                     </div>
                     
                     <div className="p-5 flex-1 flex flex-col justify-between">

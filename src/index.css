@@ -24,6 +24,18 @@ body {
   font-family: var(--font-sans);
 }
 
+:root {
+  --logo-leaf-left: #104f55;
+  --logo-leaf-right: #166a72;
+  --logo-subtitle: #104f55;
+}
+
+.dark {
+  --logo-leaf-left: #319795;
+  --logo-leaf-right: #4fd1c5;
+  --logo-subtitle: #4fd1c5;
+}
+
 /* Custom scrollbar for premium desktop feel */
 ::-webkit-scrollbar {
   width: 6px;
@@ -38,4 +50,178 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #BC6C25;
+}
+
+/* --- KIRINGO DARK MODE SYSTEM (NATURAL TONES) --- */
+.dark body {
+  background-color: #12160E;
+  color: #E9EDC9;
+}
+
+/* Background overrides */
+.dark .bg-\[\#FDFBF7\] {
+  background-color: #11150C !important;
+}
+.dark .bg-\[\#FEFAE0\] {
+  background-color: #182012 !important;
+}
+.dark .bg-\[\#E9EDC9\] {
+  background-color: #232d1a !important;
+}
+.dark .bg-\[\#F4F1DE\] {
+  background-color: #1d2616 !important;
+}
+.dark .bg-white {
+  background-color: #151c10 !important;
+}
+.dark .bg-\[\#F7F2EB\] {
+  background-color: #161e11 !important;
+}
+
+/* Opacities & alpha colors */
+.dark .bg-white\/45 {
+  background-color: rgba(21, 28, 16, 0.45) !important;
+}
+.dark .bg-white\/95 {
+  background-color: rgba(21, 28, 16, 0.95) !important;
+}
+.dark .bg-\[\#FEFAE0\]\/50 {
+  background-color: rgba(24, 32, 18, 0.5) !important;
+}
+.dark .bg-\[\#FEFAE0\]\/40 {
+  background-color: rgba(24, 32, 18, 0.4) !important;
+}
+.dark .bg-\[\#FEFAE0\]\/10 {
+  background-color: rgba(24, 32, 18, 0.1) !important;
+}
+.dark .bg-\[\#FEFAE0\]\/70 {
+  background-color: rgba(24, 32, 18, 0.7) !important;
+}
+.dark .bg-\[\#FDFBF7\]\/50 {
+  background-color: rgba(17, 21, 12, 0.5) !important;
+}
+.dark .bg-\[\#FDFBF7\]\/40 {
+  background-color: rgba(17, 21, 12, 0.4) !important;
+}
+.dark .bg-\[\#FDFBF7\]\/30 {
+  background-color: rgba(17, 21, 12, 0.3) !important;
+}
+
+/* Grays & Slate fallbacks */
+.dark .bg-slate-50, 
+.dark .bg-slate-100, 
+.dark .bg-gray-50, 
+.dark .bg-gray-100 {
+  background-color: #1a2214 !important;
+}
+.dark .bg-slate-200, 
+.dark .bg-gray-200 {
+  background-color: #232d1a !important;
+}
+
+/* Text overrides */
+.dark .text-\[\#283618\] {
+  color: #eaece4 !important;
+}
+.dark .text-\[\#606C38\] {
+  color: #a3b18a !important;
+}
+.dark .text-\[\#A3B18A\] {
+  color: #7d8f63 !important;
+}
+.dark .text-\[\#BC6C25\] {
+  color: #e28c40 !important;
+}
+
+/* Standalone gray text overrides for standard cards */
+.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+.dark .text-gray-800 {
+  color: #e2e8f0 !important;
+}
+.dark .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+.dark .text-gray-600 {
+  color: #94a3b8 !important;
+}
+.dark .text-gray-500 {
+  color: #7d8f63 !important; /* earth-toned muted text */
+}
+.dark .text-gray-400 {
+  color: #4b5a36 !important;
+}
+
+/* Border overrides */
+.dark .border-\[\#E9EDC9\] {
+  border-color: #27341e !important;
+}
+.dark .border-\[\#FDFBF7\] {
+  border-color: #171e11 !important;
+}
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-slate-100,
+.dark .border-slate-200 {
+  border-color: #27341e !important;
+}
+.dark .divide-\[\#E9EDC9\] > * + * {
+  border-color: #27341e !important;
+}
+
+/* Selection colors */
+.dark ::selection {
+  background-color: #3b4c2c !important;
+  color: #ffffff !important;
+}
+.dark .selection\:bg-\[\#E9EDC9\]::selection {
+  background-color: #3b4c2c !important;
+}
+.dark .selection\:text-\[\#283618\]::selection {
+  color: #ffffff !important;
+}
+
+/* Hover overrides */
+.dark .hover\:bg-\[\#606C38\]\/20:hover {
+  background-color: rgba(163, 177, 138, 0.15) !important;
+}
+.dark .hover\:bg-\[\#FEFAE0\]:hover {
+  background-color: #222d1a !important;
+}
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-100:hover {
+  background-color: #222d1a !important;
+}
+.dark .hover\:text-\[\#283618\]:hover {
+  color: #ffffff !important;
+}
+.dark .hover\:text-\[\#606C38\]:hover {
+  color: #e9edc9 !important;
+}
+
+/* Focus and input states */
+.dark input, .dark textarea, .dark select {
+  color: #eaece4 !important;
+}
+.dark input::placeholder, .dark textarea::placeholder {
+  color: #5c6c44 !important;
+}
+.dark .placeholder-\[\#A3B18A\]::placeholder {
+  color: #5c6c44 !important;
+}
+
+/* Modal and dialog special handling */
+.dark .bg-black\/65 {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Custom scrollbar in dark mode */
+.dark ::-webkit-scrollbar-thumb {
+  background: #27341e;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #e28c40;
 }

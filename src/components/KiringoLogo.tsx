@@ -23,9 +23,9 @@ export default function KiringoLogo({
 
   // Colors
   const mainTextColor = lightModeOnly ? "#1a1a1a" : "currentColor";
-  const leafColorLeft = "#104f55";
-  const leafColorRight = "#166a72";
-  const subtitleColor = "#104f55";
+  const leafColorLeft = lightModeOnly ? "#104f55" : "var(--logo-leaf-left, #104f55)";
+  const leafColorRight = lightModeOnly ? "#166a72" : "var(--logo-leaf-right, #166a72)";
+  const subtitleColor = lightModeOnly ? "#104f55" : "var(--logo-subtitle, #104f55)";
 
   return (
     <div className={`flex flex-col select-none ${className}`}>

@@ -70,6 +70,7 @@ export interface Group {
   postsCount: number;
   description: string;
   isJoined: boolean;
+  isFavorite?: boolean;
 }
 
 export interface MarketplaceItem {
@@ -82,6 +83,7 @@ export interface MarketplaceItem {
   description: string;
   sellerName: string;
   sellerAvatar: string;
+  isFavorite?: boolean;
 }
 
 export interface UserProfile {
@@ -109,6 +111,7 @@ export interface CommunityEvent {
   organizerAvatar: string;
   participantsCount: number;
   isJoined: boolean;
+  isFavorite?: boolean;
 }
 
 export interface Photo {
