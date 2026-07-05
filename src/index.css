@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  
+  --color-kiringo-primary: #606C38;
+  --color-kiringo-primary-hover: #283618;
+  --color-kiringo-accent: #BC6C25;
+  --color-kiringo-bg: #FDFBF7;
+  --color-kiringo-surface: #ffffff;
+  --color-kiringo-nav: #FEFAE0;
+  --color-kiringo-sidebar: #F7F2EB;
+  --color-kiringo-border: #E9EDC9;
+  --color-kiringo-text: #283618;
+  --color-kiringo-muted: #A3B18A;
+}
+
+/* Custom background styles to give that beautiful Natural Tones Facebook feed aesthetic */
+body {
+  background-color: #FDFBF7;
+  color: #283618;
+  font-family: var(--font-sans);
+}
+
+/* Custom scrollbar for premium desktop feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E9EDC9;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #BC6C25;
+}

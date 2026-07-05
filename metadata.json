@@ -1,0 +1,6 @@
+{
+  "name": "Kiringo",
+  "description": "Une plateforme de réseau social dynamique, chaleureuse et interactive inspirée de Facebook, vous connectant à vos proches et communautés avec des amis virtuels alimentés par l'IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
